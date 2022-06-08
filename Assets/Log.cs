@@ -4,16 +4,15 @@ using UnityEngine.UI;
 public class Log : MonoBehaviour
 {
     [SerializeField] private Text _logText;
-    [SerializeField] private AdController _adController;
 
     private void OnEnable()
     {
-        _adController.OnLoggedEvent += ShowLogMessage;
+        AdController.Instance.OnLoggedEvent += ShowLogMessage;
     }
 
     private void OnDisable()
     {
-        _adController.OnLoggedEvent -= ShowLogMessage;
+        AdController.Instance.OnLoggedEvent -= ShowLogMessage;
     }
 
     public void ShowLogMessage(string message)

@@ -3,40 +3,32 @@ using UnityEngine;
 
 public class Fireworks : MonoBehaviour
 {
-    [SerializeField] private AdController _adController;
     [SerializeField] private ParticleSystem _particles;
+    [SerializeField] private float _playTime;
 
-    private Coroutine _fireworks;
+    private Coroutine _fireworksRoutine;
 
     private void Start()
     {
         _particles.Stop();
     }
 
-    private void OnEnable()
+    public void Play()
     {
-        _adController.OnAdShowCompleteEvent += FireworksStart;
-    }
+        if (_fireworksRoutine != null)
+        {
+            StopCoroutine(_fireworksRoutine);
+        }
 
-    private void OnDisable()
-    {
-        _adController.OnAdShowCompleteEvent -= FireworksStart;
-    }
-
-    private void FireworksStart()
-    {
-        _fireworks = StartCoroutine(FireworksCoroutine());
+        _fireworksRoutine = StartCoroutine(FireworksCoroutine());
     }
 
     private IEnumerator FireworksCoroutine()
     {
         _particles.Play();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(_playTime);
 
         _particles.Stop();
-
-        StopCoroutine(_fireworks);
     }
-
 }

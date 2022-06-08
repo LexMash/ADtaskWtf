@@ -2,57 +2,77 @@ using UnityEngine;
 using UnityEngine.Advertisements;
 using System;
 
-public class AdController : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListener
+public class AdController : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListener, IUnityAdsInitializationListener
 {
-    public Action OnAdLoadStartedEvent;
-    public Action OnAdLoadFinishedEvent;
-    public Action OnAdShowedEvent;
-    public Action OnAdShowCompleteEvent;
-    public Action OnDestroedEvent;
-
-    public Action<string> OnLoggedEvent;
-
+    private const string PrefabPath = "AdsController";
+    
+    [SerializeField] private string _gameId = "4778209";
+    [SerializeField] private string _adUnitId = "Rewarded_Android";
     [SerializeField] private bool _testMode = true;
 
-    private string _gameId = "4778209";
-    private string _adUnitId = "Rewarded_Android";
+    public static AdController Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                var prefab = Resources.Load<AdController>(PrefabPath);
+                _instance = Instantiate(prefab);
+                DontDestroyOnLoad(_instance.gameObject);
+            }
 
+            return _instance;
+        }
+    }
+
+    private static AdController _instance;
+    
+    public event Action OnAdLoadStartedEvent;
+    public event Action OnAdLoadFinishedEvent;
+    public event Action OnAdShowedEvent;
+    public event Action OnAdShowCompleteEvent;
+    public event Action OnDestroyedEvent;
+    public event Action<string> OnLoggedEvent;
+
+    private bool _isAdLoading;
+    private bool _isAdShowing;
+    
     private void Awake()
     {
-        Advertisement.Initialize(_gameId, _testMode);
+        Advertisement.Initialize(_gameId, _testMode, this);
     }
 
     private void OnEnable()
     {
         OnAdShowedEvent?.Invoke();
 
-        LoadAd();
+        if (Advertisement.isInitialized)
+        {
+            LoadAd();
+        }
     }
 
     public void LoadAd()
     {
-        Advertisement.Load(_adUnitId, this);
-
-        OnLoggedEvent?.Invoke($"Loading Ad:  + {_adUnitId}\n");
-        OnAdLoadStartedEvent?.Invoke();       
-    }
-
-    public void OnUnityAdsAdLoaded(string adUnitId)
-    {
-        OnLoggedEvent?.Invoke($"Ad Loaded:  + {adUnitId}\n");
-        
-
-        if (adUnitId.Equals(_adUnitId))
+        if (!_isAdLoading)
         {
-            OnAdLoadFinishedEvent?.Invoke();
+            _isAdLoading = true;
+            
+            Advertisement.Load(_adUnitId, this);
+
+            OnLoggedEvent?.Invoke($"Loading Ad:  + {_adUnitId}\n");
+            OnAdLoadStartedEvent?.Invoke(); 
         }
     }
 
     public void ShowAd()
     {
-        OnAdShowedEvent?.Invoke();
+        if (!_isAdShowing)
+        {
+            OnAdShowedEvent?.Invoke();
 
-        Advertisement.Show(_adUnitId, this);
+            Advertisement.Show(_adUnitId, this);
+        }
     }
 
     public void OnUnityAdsShowComplete(string adUnitId, UnityAdsShowCompletionState showCompletionState)
@@ -65,15 +85,33 @@ public class AdController : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowL
 
             Advertisement.Load(_adUnitId, this);
         }
+
+        _isAdShowing = false;
+    }
+    
+    public void OnUnityAdsAdLoaded(string adUnitId)
+    {
+        _isAdLoading = false;
+        
+        OnLoggedEvent?.Invoke($"Ad Loaded:  + {adUnitId}\n");
+        
+        if (adUnitId.Equals(_adUnitId))
+        {
+            OnAdLoadFinishedEvent?.Invoke();
+        }
     }
 
     public void OnUnityAdsFailedToLoad(string adUnitId, UnityAdsLoadError error, string message)
     {
+        _isAdLoading = false;
+        
         OnLoggedEvent?.Invoke($"Error loading Ad Unit {adUnitId}: {error.ToString()} - {message}\n");
     }
 
     public void OnUnityAdsShowFailure(string adUnitId, UnityAdsShowError error, string message)
     {
+        _isAdShowing = false;
+        
         OnLoggedEvent?.Invoke($"Error showing Ad Unit {adUnitId}: {error.ToString()} - {message}\n");
     }
 
@@ -82,6 +120,16 @@ public class AdController : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowL
 
     void OnDestroy()
     {
-        OnDestroedEvent?.Invoke();
+        OnDestroyedEvent?.Invoke();
+    }
+
+    public void OnInitializationComplete()
+    {
+        LoadAd();
+    }
+
+    public void OnInitializationFailed(UnityAdsInitializationError error, string message)
+    {
+        Debug.LogError("AD Initialization failed");
     }
 }

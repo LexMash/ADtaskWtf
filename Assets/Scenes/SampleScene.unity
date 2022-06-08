@@ -4942,7 +4942,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _particles: {fileID: 209319570}
-  _playTime: 0
+  _playTime: 10
 --- !u!1 &444447081
 GameObject:
   m_ObjectHideFlags: 0

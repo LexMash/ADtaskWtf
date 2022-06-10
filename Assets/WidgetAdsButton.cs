@@ -5,30 +5,23 @@ public class WidgetAdsButton : MonoBehaviour
 {
     [SerializeField] private Button _button;
     [SerializeField] private GameObject _loadingIndicator;
-    [SerializeField] private Fireworks _fireworks;
 
+    #region MONO
     private void Awake()
     {
         InteractionOff();
     }
-
+  
     private void OnEnable()
     {
         _button.onClick.AddListener(OnClick);
-
-        AdController.Instance.OnAdShowedEvent += OnAdShowedEvent;
-        AdController.Instance.OnAdLoadFinishedEvent += OnAdLoadFinishedEvent;
-        AdController.Instance.OnAdLoadStartedEvent += OnAdLoadStartedEvent;
     }
 
     private void OnDisable()
     {
-        _button.onClick.AddListener(OnClick);
-        
-        AdController.Instance.OnAdShowedEvent -= OnAdShowedEvent;
-        AdController.Instance.OnAdLoadFinishedEvent -= OnAdLoadFinishedEvent;
-        AdController.Instance.OnAdLoadStartedEvent -= OnAdLoadStartedEvent;
+        _button.onClick.RemoveListener(OnClick);
     }
+    #endregion
 
     private void InteractionOn()
     {
@@ -45,20 +38,19 @@ public class WidgetAdsButton : MonoBehaviour
         AdController.Instance.ShowAd();
     }
     
-    private void OnAdLoadStartedEvent()
+    public void AdLoadStarted()
     {
         _loadingIndicator.SetActive(true);
     }
     
-    private void OnAdLoadFinishedEvent()
+    public void AdLoadFinished()
     {
         InteractionOn();
         _loadingIndicator.SetActive(false);
     }
 
-    private void OnAdShowedEvent()
+    public void AdShowed()
     {
-        InteractionOff();
-        _fireworks.Play();
+        InteractionOff();        
     }
 }

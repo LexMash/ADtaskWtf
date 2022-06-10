@@ -17,6 +17,8 @@ public class Fireworks : MonoBehaviour
     {
         if (_fireworksRoutine != null)
         {
+            _particles.Stop();
+
             StopCoroutine(_fireworksRoutine);
         }
 
@@ -31,4 +33,5 @@ public class Fireworks : MonoBehaviour
 
         _particles.Stop();
     }
+
 }

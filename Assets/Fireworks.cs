@@ -33,5 +33,4 @@ public class Fireworks : MonoBehaviour
 
         _particles.Stop();
     }
-
 }

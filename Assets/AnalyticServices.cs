@@ -4,7 +4,7 @@ public static class AnalyticServices
 
     public static void ButtonPressed()
     {
-        _unityAS.ButtonPressed();
+        _unityAS.ButtonPress();
     }
 
     public static void AdShowComplete()

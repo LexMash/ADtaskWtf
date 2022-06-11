@@ -24,8 +24,8 @@ public class WindowAdExample : MonoBehaviour
 		AdController.Instance.AdLoadStarted += AdLoadStarted;
 		AdController.Instance.AdShowComplete += AdShowComplete;
         AdController.Instance.AdLoadFinished += AdLoadFinished;
-        AdController.Instance.ADsFailedToLoad += ADsFailedToLoad;
-        AdController.Instance.ADsShowFailure += ADsShowFailure;
+        AdController.Instance.AdFailedToLoad += AdFailedToLoad;
+        AdController.Instance.AdShowFailure += AdShowFailure;
 	}
 
     private void OnDisable()
@@ -33,8 +33,8 @@ public class WindowAdExample : MonoBehaviour
 		AdController.Instance.AdLoadStarted -= AdLoadStarted;
 		AdController.Instance.AdShowComplete -= AdShowComplete;
 		AdController.Instance.AdLoadFinished -= AdLoadFinished;
-		AdController.Instance.ADsFailedToLoad -= ADsFailedToLoad;
-		AdController.Instance.ADsShowFailure -= ADsShowFailure;
+		AdController.Instance.AdFailedToLoad -= AdFailedToLoad;
+		AdController.Instance.AdShowFailure -= AdShowFailure;
 	}
 
     #endregion
@@ -61,11 +61,9 @@ public class WindowAdExample : MonoBehaviour
 	{
 		_textLog.text += "Unity Ads Rewarded Ad Completed\n";
 
-		//костыль
         if (!_fireworks.gameObject.activeSelf)
         {
 			_fireworks.gameObject.SetActive(true);
-
 		}
 
 		_buttonRunWidgetAd.AdShowed();
@@ -73,12 +71,12 @@ public class WindowAdExample : MonoBehaviour
 		_fireworks.Play();
 	}
 
-	private void ADsShowFailure(UnityAdsShowError error, string message)
+	private void AdShowFailure(UnityAdsShowError error, string message)
 	{
 		_textLog.text += $"Error showing Ad Unit {_adUnitId}: {error.ToString()} - {message}\n";
 	}
 
-	private void ADsFailedToLoad(UnityAdsLoadError error, string message)
+	private void AdFailedToLoad(UnityAdsLoadError error, string message)
 	{
 		_textLog.text += $"Error loading Ad Unit {_adUnitId}: {error.ToString()} - {message}\n";
 	}

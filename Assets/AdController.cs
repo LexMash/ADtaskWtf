@@ -36,10 +36,10 @@ public class AdController : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowL
     public event Action Destroyed;
 
     public delegate void AdsLoadEvent(UnityAdsLoadError error, string message);
-    public event AdsLoadEvent ADsFailedToLoad;
+    public event AdsLoadEvent AdFailedToLoad;
 
     public delegate void AdsShowEvent(UnityAdsShowError error, string message);
-    public event AdsShowEvent ADsShowFailure;
+    public event AdsShowEvent AdShowFailure;
 
     private bool _isAdLoading;
     private bool _isAdShowing;
@@ -105,14 +105,14 @@ public class AdController : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowL
     {
         _isAdLoading = false;
 
-        ADsFailedToLoad?.Invoke(error, message);
+        AdFailedToLoad?.Invoke(error, message);
     }
 
     public void OnUnityAdsShowFailure(string adUnitId, UnityAdsShowError error, string message)
     {
         _isAdShowing = false;
 
-        ADsShowFailure?.Invoke(error, message);
+        AdShowFailure?.Invoke(error, message);
     }
 
     public void OnUnityAdsShowStart(string adUnitId) { }
